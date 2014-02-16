@@ -16,7 +16,7 @@ The HyperAPI gem uses [Nokogiri](https://github.com/sparklemotion/nokogiri) to p
 Create objects on-the-go:
 
 ```ruby
-tpb_torrent = HyperAPI.new_class('TPB::Torrent') do
+Torrent = HyperAPI.new_class do
   string title: 'div#title'
   string description: 'div.info'
   string hash: '#details dd'
@@ -24,26 +24,47 @@ tpb_torrent = HyperAPI.new_class('TPB::Torrent') do
     attribute('href').value
   end
 end
-# => TPB::Torrent
+# => Torrent
 
-fringe = tpb_torrent.new(html)
-# => #<TPB::Torrent title: 'Fringe Season 1', description: 'The complete season 1 of Fri...', imdb_id: '1119644'>
+fringe = Torrent.new(html_string)
+# => #<TPB::Torrent title: 'Fringe Season 1', description: 'The complete season 1 of Fri...', imdb_id: 1119644>
+
+torrent = HyperAPI.new_class do
+  string title: 'div#title'
+  string description: 'div.info'
+  string hash: '#details dd'
+  integer imdb_id: '#details a[title=IMDB]' do
+    attribute('href').value
+  end
+end
+# => #<Class:0x007fda34829c48> // (anonymous class)
+
+fringe = torrent.new(html_string)
+# => #<Class:0x007fda34829c48 title: 'Fringe Season 1', description: 'The complete season 1 of Fri...', imdb_id: 1119644>
+
 ```
 
 Or create a new class:
 
 ```ruby
-class TPB::Torrent < HyperApi::Base
+class Torrent < HyperApi::Base
   string title: 'div#title'
   string description: 'div.info'
   string hash: '#details dd'
   integer imdb_id: '#details a[title=IMDB]' do
     attribute('href').value
   end
+
+  def some_calculated_method
+    "#{title}: #{hash}"
+  end
 end
 
-fringe = TPB::Torrent.new(html)
-# => #<TPB::Torrent title: 'Fringe Season 1', description: 'The complete season 1 of Fri...', imdb_id: '1119644'>
+fringe = Torrent.new(html_string)
+# => #<TPB::Torrent title: 'Fringe Season 1', description: 'The complete season 1 of Fri...', imdb_id: 1119644>
+
+fringe.some_calculated_method
+# => "Fringe Season 1: B4C04A34DD8824C28E9A8A528"
 ```
 
 ## Contributing
