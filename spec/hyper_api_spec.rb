@@ -9,10 +9,22 @@ describe HyperAPI do
     end
   end
 
-  it 'loads attributes from html string'do
+  it 'loads attributes from html string' do
     person = HyperAPI.new_class do
       string name: 'div#name'
       integer imdb_id: 'div#imdb'
+    end
+
+    bob = person.new('<div id="name">Bob</div><div id="imdb">111999</div>')
+
+    expect(bob.name).to eq('Bob')
+    expect(bob.imdb_id).to eq(111999)
+  end
+
+  it 'allows XPath queries' do
+    person = HyperAPI.new_class do
+      string name: "//div[@id='name']"
+      integer imdb_id: "//div[@id='imdb']"
     end
 
     bob = person.new('<div id="name">Bob</div><div id="imdb">111999</div>')

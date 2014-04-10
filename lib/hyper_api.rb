@@ -39,7 +39,7 @@ module HyperAPI
       known_attributes.each do |attr, options|
         type, path, block = options
 
-        unless (value = html.css(path)).empty?
+        unless (value = html.search(path)).empty?
           value = block ? value.instance_eval(&block) : value.text
           value = value.send("to_#{type[0]}")
         end

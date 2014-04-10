@@ -11,7 +11,7 @@ Add the `hyper_api` gem to your app. For example, using Bundler:
 
 ## Usage
 
-The HyperAPI gem uses [Nokogiri](https://github.com/sparklemotion/nokogiri) to parse HTML with CSS selectors.
+The HyperAPI gem uses [Nokogiri](https://github.com/sparklemotion/nokogiri) to parse HTML with CSS or XPath selectors.
 
 Create objects on-the-go:
 
@@ -20,7 +20,7 @@ Torrent = HyperAPI.new_class do
   string title: 'div#title'
   string description: 'div.info'
   string hash: '#details dd'
-  integer imdb_id: '#details a[title=IMDB]' do
+  integer imdb_id: "//[@id='details']/a[@title='IMDB']" do
     attribute('href').value
   end
 end
