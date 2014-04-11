@@ -12,19 +12,7 @@ describe HyperAPI do
   it 'loads attributes from html string' do
     person = HyperAPI.new_class do
       string name: 'div#name'
-      integer imdb_id: 'div#imdb'
-    end
-
-    bob = person.new('<div id="name">Bob</div><div id="imdb">111999</div>')
-
-    expect(bob.name).to eq('Bob')
-    expect(bob.imdb_id).to eq(111999)
-  end
-
-  it 'allows XPath queries' do
-    person = HyperAPI.new_class do
-      string name: "//div[@id='name']"
-      integer imdb_id: "//div[@id='imdb']"
+      integer imdb_id: '//div[@id="imdb"]'
     end
 
     bob = person.new('<div id="name">Bob</div><div id="imdb">111999</div>')
@@ -34,21 +22,27 @@ describe HyperAPI do
   end
 
   it 'takes a block to extract complex attributes' do
-    SomeLinkClass = HyperAPI.new_class do
-      string url: 'a' do
+    SomeLinksClass = HyperAPI.new_class do
+      string google_url: 'a' do
+        first.attribute('href').text
+      end
+
+      string facebook_url: '//a[2]' do
         attribute('href').text
       end
     end
 
-    google = SomeLinkClass.new('<a href="http://google.com">Google</a>')
+    some_links = SomeLinksClass.new('<a href="http://google.com">Google</a>' +
+      '<a href="http://facebook.com">Facebook</a>')
 
-    expect(google.url).to eq('http://google.com')
+    expect(some_links.google_url).to eq('http://google.com')
+    expect(some_links.facebook_url).to eq('http://facebook.com')
   end
 
-  it 'supports custom classes' do
+  it 'supports custom methods' do
     class Person < HyperAPI::Base
       integer imdb_id: 'div#imdb'
-      string name: 'div#name'
+      string name: '//div[@id="name"]'
       string url: 'a' do
         attribute('href').value
       end
